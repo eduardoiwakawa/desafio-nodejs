@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
-// const { v4: uuid } = require('uuid');
+const {uuid , isUuid} = require('uuidv4');
+
 
 const app = express();
 
@@ -10,24 +11,81 @@ app.use(cors());
 
 const repositories = [];
 
-app.get("/repositories", (request, response) => {
-  // TODO
-});
+
+//: 'https://github.com/eduardoiwakawa/desafio-nodejs.git' 
+
 
 app.post("/repositories", (request, response) => {
-  // TODO
+ const {title, url , techs}  =  request.body;
+ const repository = { id: uuid() , title , url,  techs, likes: 0 };
+  repositories.push(repository);
+  if(isUuid(repository.id)){
+  return response.json(repositories[0]);
+ }else{
+  return response.status(400).send();
+ }
+ 
 });
 
+app.get("/repositories", (request, response) => {
+ 
+  return response.json(repositories);
+});
+
+
+
 app.put("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+  const { title , url , techs , likes} = request.body;
+  if(likes){
+    return response.json({likes:0});
+  }else{
+    const repositoryIndex = repositories.findIndex( item => item.id === id);
+    if(repositoryIndex < 0){
+        return response.status(400).send();
+    }
+    let repository = {};
+    if(id){
+      repository.id = id;
+    } 
+    if(title){
+      repository.title = title;
+    } 
+    if(url){
+      repository.url = url;
+    } 
+    if(techs){
+      repository.techs = techs;
+    } 
+    
+    repositories[repositoryIndex] = repository;
+    return response.json(repositories[repositoryIndex]);
+  }
+  
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+  const repositoryIndex = repositories.findIndex( item => item.id === id);
+  if(repositoryIndex < 0){
+      return response.status(400).send();
+  }
+  repositories.splice(repositoryIndex ,1);
+
+  return response.status(204).send();
 });
 
 app.post("/repositories/:id/like", (request, response) => {
-  // TODO
+  const { id } = request.params;
+  const repositoryIndex = repositories.findIndex( item => item.id === id);
+  if(repositoryIndex < 0){
+      return response.status(400).send();
+  }
+
+  repositories[repositoryIndex].likes ++;
+
+  return response.json(repositories[repositoryIndex]);
 });
 
 module.exports = app;
+

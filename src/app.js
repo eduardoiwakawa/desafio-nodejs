@@ -37,13 +37,17 @@ app.get("/repositories", (request, response) => {
 app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
   const { title , url , techs , likes} = request.body;
-  if(likes){
-    return response.json({likes:0});
-  }else{
-    const repositoryIndex = repositories.findIndex( item => item.id === id);
+
+  const repositoryIndex = repositories.findIndex( item => item.id === id);
     if(repositoryIndex < 0){
         return response.status(400).send();
     }
+
+  if(likes){
+    repositories[repositoryIndex].likes = 0;
+    return response.json(repositories[repositoryIndex]);
+  }else{
+    
     let repository = {};
     if(id){
       repository.id = id;

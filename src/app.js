@@ -20,7 +20,7 @@ app.post("/repositories", (request, response) => {
  const repository = { id: uuid() , title , url,  techs, likes: 0 };
   repositories.push(repository);
   if(isUuid(repository.id)){
-  return response.json(repositories[0]);
+  return response.json(repository);
  }else{
   return response.status(400).send();
  }

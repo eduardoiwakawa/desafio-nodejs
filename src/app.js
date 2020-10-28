@@ -36,35 +36,15 @@ app.get("/repositories", (request, response) => {
 
 app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
-  const { title , url , techs , likes} = request.body;
+  const { title , url , techs , likes } = request.body;
 
   const repositoryIndex = repositories.findIndex( item => item.id === id);
     if(repositoryIndex < 0){
         return response.status(400).send();
     }
-
-  if(likes){
-    repositories[repositoryIndex].likes = 0;
-    return response.json(repositories[repositoryIndex]);
-  }else{
-    
-    let repository = {};
-    if(id){
-      repository.id = id;
-    } 
-    if(title){
-      repository.title = title;
-    } 
-    if(url){
-      repository.url = url;
-    } 
-    if(techs){
-      repository.techs = techs;
-    } 
-    
-    repositories[repositoryIndex] = repository;
-    return response.json(repositories[repositoryIndex]);
-  }
+  const repository = { id, title, url , techs, likes:repositories[repositoryIndex].likes };
+  repositories[repositoryIndex] = repository;
+  return response.json(repository);
   
 });
 
